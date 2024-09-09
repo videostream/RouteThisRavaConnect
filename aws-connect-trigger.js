@@ -39,8 +39,9 @@ export const handler = async (event) => {
         streamARN: streamARN,
         streamURL : endPoint.DataEndpoint
     };
+    const url = region === 'us-east-1' ? "https://qw5ohfq3rk.execute-api.us-east-1.amazonaws.com/Prod/aws-connect-endpoint" : "https://e6iagb6ey2.execute-api.eu-west-1.amazonaws.com/Prod/aws-connect-endpoint"; 
     
-    const res  = post("https://bxoyjubtpd.execute-api.us-east-1.amazonaws.com/main/transcribe", postData); // TODO: Update this to produrl
+    const res  = post(url, postData); // TODO: Update this to produrl
     
     await Promise.all([res]);
   }
