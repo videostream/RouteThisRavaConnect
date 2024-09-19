@@ -2,6 +2,8 @@
 
 Steps:
 
+- Contact us to get our AWS Account ID to use during the setup
+
 - Copy aws-connect-trigger.js to a new lambda function
   - Give the lambda function the permissions shown here:
   ![alt text](https://github.com/videostream/RouteThisRavaConnect/blob/main/docImages/lambdaPermission.png?raw=true)
