@@ -5,7 +5,7 @@ import https from 'https';
 export const handler = async (event) => {
   const agentARN = event.Details.Parameters.AgentARN;
   const instanceARN = event.Details.ContactData.InstanceARN;
-  const region = process.env('AWS_REGION');
+  const region = process.env.AWS_REGION;
   
   let agentDetails;
   
@@ -35,9 +35,10 @@ export const handler = async (event) => {
   
   if (streamDetails) {    
     const postData = {
-        agentEmail : agentDetails,
+        agentEmail : agentDetails.User.IdentityInfo.Email,
         streamARN: streamARN,
-        streamURL : endPoint.DataEndpoint
+        streamURL : endPoint.DataEndpoint,
+        region,
     };
     const url = region === 'us-east-1' ? "https://qw5ohfq3rk.execute-api.us-east-1.amazonaws.com/Prod/aws-connect-endpoint" : "https://e6iagb6ey2.execute-api.eu-west-1.amazonaws.com/Prod/aws-connect-endpoint"; 
     
