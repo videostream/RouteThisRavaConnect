@@ -6,7 +6,8 @@ export const handler = async (event) => {
   const agentARN = event.Details.Parameters.AgentARN;
   const instanceARN = event.Details.ContactData.InstanceARN;
   const region = process.env.AWS_REGION;
-  
+  const contactData = event.Details.ContactData;
+  const phone = contactData.CustomerEndpoint.Address;
   let agentDetails;
   
   if (agentARN && instanceARN) {
@@ -33,17 +34,21 @@ export const handler = async (event) => {
     endPoint = await client.send(getDataEndpointCommand);
   }
   
-  if (streamDetails) {    
+  if (streamDetails) {   
+    const userId = agentDetails.User.IdentityInfo.Email; // This can be updated if using a different userId
     const postData = {
-        agentEmail : agentDetails.User.IdentityInfo.Email,
+        agentEmail : userId,
         streamARN: streamARN,
         streamURL : endPoint.DataEndpoint,
         region,
+        contactId : event.Details.ContactData.ContactId,
+        type      : event.Details.ContactData.InitiationMethod,
+        previousContactId : event.Details.ContactData.PreviousContactId,
+        phone,
     };
-    const url = region === 'us-east-1' ? "https://qw5ohfq3rk.execute-api.us-east-1.amazonaws.com/Prod/aws-connect-endpoint" : "https://e6iagb6ey2.execute-api.eu-west-1.amazonaws.com/Prod/aws-connect-endpoint"; 
+    const url = region.startsWith('us') ? "https://qw5ohfq3rk.execute-api.us-east-1.amazonaws.com/Prod/aws-connect-endpoint" : "https://e6iagb6ey2.execute-api.eu-west-1.amazonaws.com/Prod/aws-connect-endpoint"; 
     
-    const res  = post(url, postData); // TODO: Update this to produrl
-    
+    const res  = post(url, postData);
     await Promise.all([res]);
   }
 
