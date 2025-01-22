@@ -3,13 +3,13 @@ import { KinesisVideoClient, DescribeStreamCommand, GetDataEndpointCommand } fro
 import https from 'https';
 
 export const handler = async (event) => {
-  const agentARN = event.Details.Parameters.AgentARN;
+  console.log(event);
+  const agentARN = event.Details.Parameters.AgentARN || event.Details.Parameters.AgentArn;
   const instanceARN = event.Details.ContactData.InstanceARN;
   const region = process.env.AWS_REGION;
   const contactData = event.Details.ContactData;
   const phone = contactData.CustomerEndpoint.Address;
   let agentDetails;
-  
   if (agentARN && instanceARN) {
     const client = new ConnectClient({ region });
     const command = new DescribeUserCommand( {
@@ -33,7 +33,6 @@ export const handler = async (event) => {
     });
     endPoint = await client.send(getDataEndpointCommand);
   }
-  
   if (streamDetails) {   
     const userId = agentDetails.User.IdentityInfo.Email; // This can be updated if using a different userId
     const postData = {
@@ -49,6 +48,7 @@ export const handler = async (event) => {
     const url = region.startsWith('us') ? "https://qw5ohfq3rk.execute-api.us-east-1.amazonaws.com/Prod/aws-connect-endpoint" : "https://e6iagb6ey2.execute-api.eu-west-1.amazonaws.com/Prod/aws-connect-endpoint"; 
     
     const res  = post(url, postData);
+    
     await Promise.all([res]);
   }
 
